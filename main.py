@@ -71,6 +71,7 @@ previousTime = int(time.mktime(datetime.utcnow().timetuple()))
 count = 0
 flairs = collections.defaultdict(int)
 postIds = []
+log.info("Finding posts")
 while True:
 	newUrl = url+str(previousTime)
 	json = requests.get(newUrl, headers={'User-Agent': USER_AGENT})
@@ -82,13 +83,11 @@ while True:
 		previousTime = post['created_utc'] - 1
 		count += 1
 		postIds.append(post['id'])
-		if count > 10:
-			break
 
-	if count > 10:
-		break
+		if count % 500 == 0:
+			log.info("Found {} posts so far".format(count))
 
-log.info("Found {} posts".format(count))
+log.info("Found {} total posts".format(count))
 
 flairsUpdated = 0
 errors = 0
@@ -130,7 +129,7 @@ for i, postId in enumerate(postIds):
 		log.info("{}/{}: {}: {}: {}".format(i + 1, count, submission.id, submissionCreated.strftime('%m/%d/%y'), reason))
 
 	except Exception as err:
-		log.warning("{}/{}: {}: {}: {}".format(i, count, postId, "--/--/--", "Something went wrong"))
+		log.warning("{}/{}: {}: {}: {}: {}".format(i + 1, count, postId, "--/--/--", "Something went wrong", str(err)))
 		if debug:
 			log.warning(traceback.format_exc())
 		errors += 1
