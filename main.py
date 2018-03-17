@@ -47,9 +47,6 @@ if len(sys.argv) >= 1:
 	for arg in sys.argv:
 		if arg == 'debug':
 			debug = True
-else:
-	log.error("No user specified, aborting")
-	sys.exit(0)
 
 try:
 	r = praw.Reddit(username=username,
